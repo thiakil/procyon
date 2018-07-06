@@ -58,7 +58,7 @@ public final class Reifier implements TypeTreeVisitor<TypeReference> {
             tas[i].accept(this);
             ts[i] = resultType;
             if (ts[i] == null) {
-                if (LOG.isLoggable(Level.WARNING)) {
+                if (!(tas[i] instanceof TypeVariableSignature) && LOG.isLoggable(Level.WARNING)) {
                     LOG.warning("BAD TYPE ARGUMENTS: " + Arrays.toString(tas) + "; " + Arrays.toString(ts));
                 }
                 ts[i] = BuiltinTypes.Object;
