@@ -263,6 +263,15 @@ public final class CollectionUtilities {
         throw Error.sequenceHasNoElements();
     }
 
+    public static <T> T firstOfType(final Iterable<Object> collection, Class<T> type) {
+        for (Object o : VerifyArgument.notNull(collection, "collection")){
+            if (type.isInstance(o)){
+                return type.cast(o);
+            }
+        }
+        return null;
+    }
+
     public static <T> T singleOrDefault(final Iterable<T> collection) {
         if (collection instanceof List<?>) {
             return singleOrDefault((List<T>) collection);
