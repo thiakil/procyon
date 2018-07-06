@@ -133,9 +133,9 @@ public class CollapseImportsTransform implements IAstTransform {
 
                     if (StringUtilities.isNullOrEmpty(packageName) ||
                         StringUtilities.equals(packageName, "java.lang") ||
-                        StringUtilities.equals(packageName, filePackage) ||
-                        !isPublic(type)) {
-
+                        StringUtilities.equals(packageName, filePackage) /*||
+                        !isPublic(type)*/) {
+                        //todo: turn public into an option
                         oldImport.remove();
                     }
                 }
