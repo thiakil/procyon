@@ -184,7 +184,7 @@ public final class AstBuilder {
 
         final List<ExceptionHandler> handlers = _exceptionHandlers;
         final Set<ExceptionHandler> originalHandlers = new HashSet<>(handlers);
-        final List<SubroutineInfo> inlinedSubroutines = new ArrayList<>();
+        final List<SubroutineInfo> inlinedSubroutines = new LinkedList<>();
         final Set<Instruction> instructionsToKeep = new HashSet<>();
 
         for (final SubroutineInfo subroutine : subroutines) {
@@ -258,7 +258,7 @@ public final class AstBuilder {
 
         if (nonEmpty) {
             final int jumpIndex = instructions.indexOf(reference);
-            final List<Instruction> originalContents = new ArrayList<>();
+            final List<Instruction> originalContents = new ArrayList<>(subroutine.contents.size());
 
             for (final ControlFlowNode node : subroutine.contents) {
                 for (Instruction p = node.getStart();
@@ -637,12 +637,12 @@ public final class AstBuilder {
     private final static class SubroutineInfo {
         final Instruction start;
         final Instruction end;
-        final List<Instruction> liveReferences = new ArrayList<>();
-        final List<Instruction> deadReferences = new ArrayList<>();
+        final List<Instruction> liveReferences = new LinkedList<>();
+        final List<Instruction> deadReferences = new LinkedList<>();
         final List<ControlFlowNode> contents;
         final ControlFlowNode entryNode;
-        final List<ControlFlowNode> exitNodes = new ArrayList<>();
-        final List<ExceptionHandler> containedHandlers = new ArrayList<>();
+        final List<ControlFlowNode> exitNodes = new LinkedList<>();
+        final List<ExceptionHandler> containedHandlers = new LinkedList<>();
         final ControlFlowGraph cfg;
 
         public SubroutineInfo(final ControlFlowNode entryNode, final List<ControlFlowNode> contents, final ControlFlowGraph cfg) {
@@ -926,7 +926,7 @@ public final class AstBuilder {
     }
 
     private static List<ExceptionHandler> remapHandlers(final List<ExceptionHandler> handlers, final InstructionCollection instructions) {
-        final List<ExceptionHandler> newHandlers = new ArrayList<>();
+        final List<ExceptionHandler> newHandlers = new ArrayList<>(handlers.size());
 
         for (final ExceptionHandler handler : handlers) {
             final InstructionBlock oldTry = handler.getTryBlock();
@@ -1790,7 +1790,7 @@ public final class AstBuilder {
         for (final ExceptionHandler handler : handlers) {
             if (handler.getTryBlock().equals(tryBlock)) {
                 if (result == null) {
-                    result = new ArrayList<>();
+                    result = new LinkedList<>();
                 }
 
                 result.add(handler);
@@ -1818,7 +1818,7 @@ public final class AstBuilder {
     }
 
     private static List<ExceptionHandler> findDuplicateHandlers(final ExceptionHandler handler, final Collection<ExceptionHandler> handlers) {
-        final List<ExceptionHandler> result = new ArrayList<>();
+        final List<ExceptionHandler> result = new LinkedList<>();
 
         for (final ExceptionHandler other : handlers) {
             if (other.getHandlerBlock().equals(handler.getHandlerBlock())) {
@@ -1856,8 +1856,8 @@ public final class AstBuilder {
         final Map<Instruction, ByteCode> byteCodeMap = new LinkedHashMap<>();
         final Map<Instruction, ControlFlowNode> nodeMap = new IdentityHashMap<>();
         final InstructionCollection instructions = _instructions;
-        final List<ExceptionHandler> exceptionHandlers = new ArrayList<>();
-        final List<ControlFlowNode> successors = new ArrayList<>();
+        final List<ExceptionHandler> exceptionHandlers = new ArrayList<>( _cfg.getNodes().size());
+        final List<ControlFlowNode> successors = new ArrayList<>(10);
 
         for (final ControlFlowNode node : _cfg.getNodes()) {
             if (node.getExceptionHandler() != null) {
@@ -1927,8 +1927,8 @@ public final class AstBuilder {
             next.previous = current;
         }
 
-        final ArrayDeque<ByteCode> agenda = new ArrayDeque<>();
-        final ArrayDeque<ByteCode> handlerAgenda = new ArrayDeque<>();
+        final Deque<ByteCode> agenda = new LinkedList<>();
+        final Deque<ByteCode> handlerAgenda = new LinkedList<>();
         final int variableCount = _body.getMaxLocals();
         final VariableSlot[] unknownVariables = VariableSlot.makeUnknownState(variableCount);
         final MethodReference method = _body.getMethod();
@@ -2077,7 +2077,7 @@ public final class AstBuilder {
             //
             // Find all successors.
             //
-            final ArrayList<ByteCode> branchTargets = new ArrayList<>();
+            final List<ByteCode> branchTargets = new LinkedList<>();
             final ControlFlowNode node = nodeMap.get(byteCode.instruction);
 
             successors.clear();
@@ -2641,9 +2641,7 @@ public final class AstBuilder {
         final List<VariableReference> varReferences = new ArrayList<>();
         final Map<String, VariableDefinition> lookup = makeVariableLookup(variables);
 
-        for (final VariableDefinition variableDefinition : variables) {
-            varReferences.add(variableDefinition);
-        }
+        varReferences.addAll(variables);
 
         for (final ByteCode b : body) {
             if (b.operand instanceof VariableReference && !(b.operand instanceof VariableDefinition)) {
@@ -2662,8 +2660,8 @@ public final class AstBuilder {
 
             final int slot = vRef.getSlot();
 
-            final List<ByteCode> definitions = new ArrayList<>();
-            final List<ByteCode> references = new ArrayList<>();
+            final List<ByteCode> definitions = new LinkedList<>();
+            final List<ByteCode> references = new LinkedList<>();
 
             final VariableDefinition vDef = vRef instanceof VariableDefinition ? lookup.get(key((VariableDefinition) vRef))
                                                                                : null;
@@ -2747,8 +2745,8 @@ public final class AstBuilder {
                     parameterVariable = new VariableInfo(
                         slot,
                         variable,
-                        new ArrayList<ByteCode>(),
-                        new ArrayList<ByteCode>()
+                        new LinkedList<ByteCode>(),
+                        new LinkedList<ByteCode>()
                     );
 
                     Collections.addAll(parameterVariable.definitions, parameterDefinitions);
@@ -2849,8 +2847,8 @@ public final class AstBuilder {
                     final VariableInfo variableInfo = new VariableInfo(
                         slot,
                         variable,
-                        new ArrayList<ByteCode>(),
-                        new ArrayList<ByteCode>()
+                        new LinkedList<ByteCode>(),
+                        new LinkedList<ByteCode>()
                     );
 
                     variableInfo.definitions.add(b);
@@ -2895,7 +2893,7 @@ public final class AstBuilder {
                         newVariable.references.add(ref);
                     }
                     else {
-                        final ArrayList<VariableInfo> mergeVariables = new ArrayList<>();
+                        final List<VariableInfo> mergeVariables = new LinkedList<>();
 
                         for (final VariableInfo v : newVariables) {
                             boolean hasIntersection = false;
@@ -2925,8 +2923,8 @@ public final class AstBuilder {
 //                            }
 //                        }
 
-                        final ArrayList<ByteCode> mergedDefinitions = new ArrayList<>();
-                        final ArrayList<ByteCode> mergedReferences = new ArrayList<>();
+                        final LinkedList<ByteCode> mergedDefinitions = new LinkedList<>();
+                        final LinkedList<ByteCode> mergedReferences = new LinkedList<>();
 
                         if (parameterVariable != null &&
                             (mergeVariables.isEmpty() ||
@@ -3357,7 +3355,7 @@ public final class AstBuilder {
                 }
             }
 
-            final ArrayList<ExceptionHandler> handlers = new ArrayList<>();
+            final List<ExceptionHandler> handlers = new LinkedList<>();
 
             for (final ExceptionHandler handler : exceptionHandlers) {
                 final int start = handler.getTryBlock().getFirstInstruction().getOffset();
@@ -3742,7 +3740,7 @@ public final class AstBuilder {
 
     @SuppressWarnings("ConstantConditions")
     private List<Node> convertToAst(final List<ByteCode> body) {
-        final ArrayList<Node> ast = new ArrayList<>();
+        final ArrayList<Node> ast = new ArrayList<>(body.size());
 
         //
         // Convert stack-based bytecode to bytecode AST.
@@ -4391,7 +4389,7 @@ public final class AstBuilder {
             final ExceptionHandler handler = handlerInfo.handler;
             final ControlFlowNode tryHead = _nodeMap.get(handler.getTryBlock().getFirstInstruction());
             final ControlFlowNode finallyTail = _nodeMap.get(handler.getHandlerBlock().getLastInstruction());
-            final List<Pair<Instruction, Instruction>> startingPoints = new ArrayList<>();
+            final List<Pair<Instruction, Instruction>> startingPoints = new LinkedList<>();
 
         nextNode:
             for (ControlFlowNode node : toProcess) {
@@ -4577,7 +4575,7 @@ public final class AstBuilder {
         @SuppressWarnings("ConstantConditions")
         private Set<ControlFlowNode> collectNodes(final HandlerInfo handlerInfo) {
             final ControlFlowGraph cfg = _cfg;
-            final List<ControlFlowNode> successors = new ArrayList<>();
+            final List<ControlFlowNode> successors = new ArrayList<>(10);
             final Set<ControlFlowNode> toProcess = new LinkedHashSet<>();
             final ControlFlowNode endFinallyNode = handlerInfo.handlerNode.getEndFinallyNode();
             final Set<ControlFlowNode> exitOnlySuccessors = new LinkedHashSet<>();
@@ -4668,7 +4666,7 @@ public final class AstBuilder {
             for (final ControlFlowNode node : toProcess) {
                 if (_allFinallyNodes.contains(node)) {
                     if (finallyNodes == null) {
-                        finallyNodes = new ArrayList<>();
+                        finallyNodes = new ArrayList<>(10);
                     }
                     finallyNodes.add(node);
                 }

@@ -426,7 +426,7 @@ public final class SignatureParser {
 
     // TypeSignature*
     private TypeSignature[] parseZeroOrMoreTypeSignatures() {
-        final Collection<TypeSignature> ts = new ArrayList<>();
+        final Collection<TypeSignature> ts = new ArrayList<>(10);
         boolean stop = false;
         while (!stop) {
             switch (current()) {

@@ -31,12 +31,13 @@ import java.util.Map;
 import java.util.Stack;
 
 public class StackMappingVisitor implements MethodVisitor {
+    private static final int DEFAULT_LIST_SIZE = 10;
     private final MethodVisitor _innerVisitor;
 
     private int _maxLocals;
     //    private int _maxStack;
-    private List<FrameValue> _stack = new ArrayList<>();
-    private List<FrameValue> _locals = new ArrayList<>();
+    private List<FrameValue> _stack = new ArrayList<>(DEFAULT_LIST_SIZE);
+    private List<FrameValue> _locals = new ArrayList<>(DEFAULT_LIST_SIZE);
     private Map<Instruction, TypeReference> _initializations = new IdentityHashMap<>();
 
     public StackMappingVisitor() {
@@ -133,8 +134,8 @@ public class StackMappingVisitor implements MethodVisitor {
 //            _initializations.clear();
         }
         else {
-            _locals = new ArrayList<>();
-            _stack = new ArrayList<>();
+            _locals = new ArrayList<>(DEFAULT_LIST_SIZE);
+            _stack = new ArrayList<>(DEFAULT_LIST_SIZE);
             _initializations = new IdentityHashMap<>();
         }
 
@@ -184,8 +185,8 @@ public class StackMappingVisitor implements MethodVisitor {
         _maxLocals = Math.max(_maxLocals, local);
 
         if (_locals == null) {
-            _locals = new ArrayList<>();
-            _stack = new ArrayList<>();
+            _locals = new ArrayList<>(DEFAULT_LIST_SIZE);
+            _stack = new ArrayList<>(DEFAULT_LIST_SIZE);
             _initializations = new IdentityHashMap<>();
         }
 
@@ -204,8 +205,8 @@ public class StackMappingVisitor implements MethodVisitor {
         _maxLocals = Math.max(_maxLocals, local);
 
         if (_locals == null) {
-            _locals = new ArrayList<>();
-            _stack = new ArrayList<>();
+            _locals = new ArrayList<>(DEFAULT_LIST_SIZE);
+            _stack = new ArrayList<>(DEFAULT_LIST_SIZE);
             _initializations = new IdentityHashMap<>();
         }
 
@@ -282,8 +283,8 @@ public class StackMappingVisitor implements MethodVisitor {
 
     protected final void push(final TypeReference type) {
         if (_stack == null) {
-            _locals = new ArrayList<>();
-            _stack = new ArrayList<>();
+            _locals = new ArrayList<>(DEFAULT_LIST_SIZE);
+            _stack = new ArrayList<>(DEFAULT_LIST_SIZE);
             _initializations = new IdentityHashMap<>();
         }
 
@@ -324,8 +325,8 @@ public class StackMappingVisitor implements MethodVisitor {
 
     protected final void push(final FrameValue value) {
         if (_stack == null) {
-            _locals = new ArrayList<>();
-            _stack = new ArrayList<>();
+            _locals = new ArrayList<>(DEFAULT_LIST_SIZE);
+            _stack = new ArrayList<>(DEFAULT_LIST_SIZE);
             _initializations = new IdentityHashMap<>();
         }
         _stack.add(value);
@@ -1163,7 +1164,7 @@ public class StackMappingVisitor implements MethodVisitor {
 
             if (type instanceof IGenericInstance) {
                 final IGenericInstance genericInstance = (IGenericInstance) type;
-                final List<TypeReference> newTypeArguments = new ArrayList<>();
+                final List<TypeReference> newTypeArguments = new ArrayList<>(DEFAULT_LIST_SIZE);
 
                 boolean isChanged = false;
 

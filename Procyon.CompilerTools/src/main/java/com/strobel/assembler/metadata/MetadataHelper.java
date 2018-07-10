@@ -1176,7 +1176,7 @@ public final class MetadataHelper {
 
                     if (descriptors.add(key)) {
                         if (results == null) {
-                            results = new ArrayList<>();
+                            results = new LinkedList<>();
                         }
 
                         final MethodReference asMember = asMemberOf(method, type);
@@ -2205,7 +2205,7 @@ public final class MetadataHelper {
     };
 
     static List<ParameterDefinition> copyParameters(final List<ParameterDefinition> parameters) {
-        final List<ParameterDefinition> newParameters = new ArrayList<>();
+        final List<ParameterDefinition> newParameters = new ArrayList<>(parameters.size());
 
         for (final ParameterDefinition p : parameters) {
             if (p.hasName()) {
@@ -2629,7 +2629,7 @@ public final class MetadataHelper {
                     final List<? extends TypeReference> formal = getTypeArguments(r);
                     final List<? extends TypeReference> actual = getTypeArguments(t);
 
-                    final ArrayList<TypeReference> result = new ArrayList<>();
+                    final ArrayList<TypeReference> result = new ArrayList<>(interfaces.size());
                     final Map<TypeReference, TypeReference> mappings = new HashMap<>();
 
                     for (int i = 0, n = formal.size(); i < n; i++) {

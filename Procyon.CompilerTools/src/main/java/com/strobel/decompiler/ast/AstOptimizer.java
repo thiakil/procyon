@@ -381,7 +381,7 @@ public final class AstOptimizer {
             new Supplier<List<Label>>() {
                 @Override
                 public List<Label> get() {
-                    return new ArrayList<>();
+                    return new LinkedList<>();
                 }
             }
         );

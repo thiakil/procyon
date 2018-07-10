@@ -620,7 +620,7 @@ public final class ExceptionHandlerMapper {
     }
 
     private List<ExceptionHandler> createHandlerPlaceholders() {
-        final ArrayList<ExceptionHandler> handlers = new ArrayList<>();
+        final ArrayList<ExceptionHandler> handlers = new ArrayList<>(_tableEntries.size());
 
         for (final ExceptionTableEntry entry : _tableEntries) {
             final ExceptionHandler handler;

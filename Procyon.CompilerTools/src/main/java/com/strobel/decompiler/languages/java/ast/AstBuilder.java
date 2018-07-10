@@ -268,7 +268,7 @@ public final class AstBuilder {
                 options.setAllowWildcards(true);
             }
 
-            final List<AstType> typeArguments = new ArrayList<>();
+            final List<AstType> typeArguments = new ArrayList<>(genericInstance.getTypeArguments().size());
 
             try {
                 for (final TypeReference typeArgument : genericInstance.getTypeArguments()) {

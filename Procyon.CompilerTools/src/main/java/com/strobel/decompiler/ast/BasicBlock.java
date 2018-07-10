@@ -20,6 +20,7 @@ import com.strobel.assembler.Collection;
 import com.strobel.decompiler.ITextOutput;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public final class BasicBlock extends Node {
@@ -35,14 +36,14 @@ public final class BasicBlock extends Node {
 
     @Override
     public final List<Node> getChildren() {
-        final ArrayList<Node> childrenCopy = new ArrayList<>(_body.size());
+        final List<Node> childrenCopy = new LinkedList<>();
         childrenCopy.addAll(_body);
         return childrenCopy;
     }
 
     @Override
     public final void writeTo(final ITextOutput output) {
-        final List<Node> children = getChildren();
+        final List<Node> children = _body;
 
         boolean previousWasSimpleNode = true;
 

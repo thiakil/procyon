@@ -31,6 +31,7 @@ import com.strobel.util.EmptyArrayCache;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -83,8 +84,8 @@ public final class ClassFileReader extends MetadataReader {
         _constantPool = constantPool;
         _baseClassEntry = baseClassEntry;
         _interfaceEntries = VerifyArgument.notNull(interfaceEntries, "interfaceEntries");
-        _fields = new ArrayList<>();
-        _methods = new ArrayList<>();
+        _fields = new LinkedList<>();
+        _methods = new LinkedList<>();
 
         _typeDefinition = new TypeDefinition();
         _typeDefinition.setResolver(_resolver);

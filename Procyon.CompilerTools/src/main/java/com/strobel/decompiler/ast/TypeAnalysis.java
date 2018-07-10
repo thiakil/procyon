@@ -38,7 +38,7 @@ import static com.strobel.decompiler.ast.PatternMatching.*;
 public final class TypeAnalysis {
     private final static int FLAG_BOOLEAN_PROHIBITED = 0x01;
 
-    private final List<ExpressionToInfer> _allExpressions = new ArrayList<>();
+    private final List<ExpressionToInfer> _allExpressions = new LinkedList<>();
     private final Set<Variable> _singleStoreVariables = new LinkedHashSet<>();
     private final Set<Variable> _singleLoadVariables = new LinkedHashSet<>();
     private final Set<Variable> _allVariables = new LinkedHashSet<>();
@@ -55,7 +55,7 @@ public final class TypeAnalysis {
                     return Collections.emptyList();
                 }
 
-                put((Variable) key, value = new ArrayList<>());
+                put((Variable) key, value = new LinkedList<>());
             }
 
             return value;
@@ -64,7 +64,7 @@ public final class TypeAnalysis {
 
     private final Map<Variable, Set<TypeReference>> _previouslyInferred = new DefaultMap<>(CollectionUtilities.<TypeReference>setFactory());
     private final IdentityHashMap<Variable, TypeReference> _inferredVariableTypes = new IdentityHashMap<>();
-    private final Stack<Expression> _stack = new Stack<>();
+    private final Deque<Expression> _stack = new LinkedList<>();
 
     private DecompilerContext _context;
     private CoreMetadataFactory _factory;
@@ -288,7 +288,7 @@ public final class TypeAnalysis {
             new Supplier<List<ExpressionToInfer>>() {
                 @Override
                 public List<ExpressionToInfer> get() {
-                    return new ArrayList<>();
+                    return new LinkedList<>();
                 }
             }
         );
@@ -938,7 +938,7 @@ public final class TypeAnalysis {
 
                                 if (MetadataHelper.isSameType(gp, key, true)) {
                                     if (mappingsToRemove == null) {
-                                        mappingsToRemove = new ArrayList<>();
+                                        mappingsToRemove = new LinkedList<>();
                                     }
                                     mappingsToRemove.add(key);
                                 }
@@ -2946,7 +2946,7 @@ public final class TypeAnalysis {
 
         if (type instanceof IGenericInstance) {
             final IGenericInstance genericInstance = (IGenericInstance) type;
-            final List<TypeReference> newTypeArguments = new ArrayList<>();
+            final List<TypeReference> newTypeArguments = new ArrayList<>(genericInstance.getTypeArguments().size());
 
             boolean isChanged = false;
 
@@ -3106,7 +3106,7 @@ public final class TypeAnalysis {
     // <editor-fold defaultstate="collapsed" desc="ExpressionToInfer Class">
 
     final static class ExpressionToInfer {
-        private final List<Variable> dependencies = new ArrayList<>();
+        private final List<Variable> dependencies = new LinkedList<>();
 
         Expression expression;
         boolean done;
