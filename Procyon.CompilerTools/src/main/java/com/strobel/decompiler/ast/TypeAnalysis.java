@@ -987,6 +987,13 @@ public final class TypeAnalysis {
 
                     if (result == null && assignments.isEmpty()) {
                         result = BuiltinTypes.Object;
+                    } else if (result == null){
+                        for (ExpressionToInfer e : assignments){
+                            if (e.done && e.expression.getInferredType() != null){
+                                result = e.expression.getInferredType();
+                                break;
+                            }
+                        }
                     }
 
                     if (result != null && result.isWildcardType()) {
