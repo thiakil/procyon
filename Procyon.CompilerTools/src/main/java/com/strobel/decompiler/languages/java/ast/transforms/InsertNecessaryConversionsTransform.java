@@ -161,7 +161,8 @@ public class InsertNecessaryConversionsTransform extends ContextTrackingVisitor<
     public Void visitAssignmentExpression(final AssignmentExpression node, final Void data) {
         super.visitAssignmentExpression(node, data);
 
-        addCastForAssignment(node.getLeft(), node.getRight());
+        if (node.getOperator() == AssignmentOperatorType.ASSIGN)//dont do it for /= etc
+            addCastForAssignment(node.getLeft(), node.getRight());
 
         return null;
     }
