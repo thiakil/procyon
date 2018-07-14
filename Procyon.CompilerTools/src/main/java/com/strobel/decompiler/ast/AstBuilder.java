@@ -3683,7 +3683,7 @@ public final class AstBuilder {
         final ByteCode loadException = _loadExceptions.get(handler);
         final int handlerStart = handler.getHandlerBlock().getFirstInstruction().getOffset();
 
-        if (loadException.storeTo == null || loadException.storeTo.size() != 1) {
+        if (loadException.storeTo != null && loadException.storeTo.size() != 1) {
             final Variable exceptionTemp = new Variable();
 
             exceptionTemp.setName(format("ex_%1$02X", handlerStart));
@@ -3735,7 +3735,8 @@ public final class AstBuilder {
             return;
         }
 
-        catchBlock.setExceptionVariable(loadException.storeTo.get(0));
+        if (loadException.storeTo != null)
+            catchBlock.setExceptionVariable(loadException.storeTo.get(0));
     }
 
     @SuppressWarnings("ConstantConditions")
