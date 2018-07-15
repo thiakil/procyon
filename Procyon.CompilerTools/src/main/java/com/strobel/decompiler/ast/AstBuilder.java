@@ -3371,10 +3371,18 @@ public final class AstBuilder {
                 new Comparator<ExceptionHandler>() {
                     @Override
                     public int compare(@NotNull final ExceptionHandler o1, @NotNull final ExceptionHandler o2) {
-                        return Integer.compare(
+                        int offsetResult = Integer.compare(
                             o1.getTryBlock().getFirstInstruction().getOffset(),
                             o2.getTryBlock().getFirstInstruction().getOffset()
                         );
+                        if (offsetResult != 0){
+                            return offsetResult;
+                        }
+                        //Sort any equal blocks with storeTo non-null first (J8)
+                        if (_loadExceptions.get(o1).storeTo != null){
+                            return -1;
+                        }
+                        return _loadExceptions.get(o2).storeTo != null ? 1 : 0;
                     }
                 }
             );
