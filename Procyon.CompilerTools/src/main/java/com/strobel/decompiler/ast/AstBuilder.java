@@ -1656,7 +1656,18 @@ public final class AstBuilder {
         // out AST, so just merge the parts back together.
         //
 
-        final List<ExceptionHandler> handlers = _exceptionHandlers;
+        final List<ExceptionHandler> handlers = new ArrayList<>(_exceptionHandlers);
+
+        //need to sort this for J8 combined exceptions, using a new list to not mess with the initial sort.
+        Collections.sort(handlers, new Comparator<ExceptionHandler>() {
+            @Override
+            public int compare(ExceptionHandler o1, ExceptionHandler o2) {
+                if (o1.getHandlerType() != o2.getHandlerType() || o1.getHandlerType() == ExceptionHandlerType.Finally){
+                    return o1.compareTo(o2);
+                }
+                return o1.getCatchType().getInternalName().compareTo(o2.getCatchType().getInternalName());
+            }
+        });
 
         for (int i = 0; i < handlers.size() - 1; i++) {
             final ExceptionHandler current = handlers.get(i);
@@ -1709,7 +1720,9 @@ public final class AstBuilder {
                     }
 
                     handlers.set(i, newHandler);
+                    _exceptionHandlers.set(_exceptionHandlers.indexOf(current), newHandler);
                     handlers.remove(i + 1);
+                    _exceptionHandlers.remove(next);
                     --i;
                 }
             }
