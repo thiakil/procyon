@@ -3391,6 +3391,13 @@ public final class AstBuilder {
                         if (offsetResult != 0){
                             return offsetResult;
                         }
+                        offsetResult = Integer.compare(
+                                o1.getHandlerBlock().getFirstInstruction().getOffset(),
+                                o2.getHandlerBlock().getFirstInstruction().getOffset()
+                        );
+                        if (offsetResult != 0){
+                            return -offsetResult;
+                        }
                         //Sort any equal blocks with storeTo non-null first (J8)
                         if (_loadExceptions.get(o1).storeTo != null){
                             return -1;
