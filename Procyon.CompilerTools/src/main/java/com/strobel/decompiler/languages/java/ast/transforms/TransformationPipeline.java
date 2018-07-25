@@ -68,7 +68,8 @@ public final class TransformationPipeline {
             new AddStandardAnnotationsTransform(context),
             new AddReferenceQualifiersTransform(context),
             new RemoveHiddenMembersTransform(context),
-            new CollapseImportsTransform(context)
+            new CollapseImportsTransform(context),
+            new FixInnerClassGenericParamTransform(context)
         };
     }
 
