@@ -22,6 +22,7 @@ import com.strobel.assembler.metadata.IMethodSignature;
 import com.strobel.assembler.metadata.JvmType;
 import com.strobel.assembler.metadata.MemberReference;
 import com.strobel.assembler.metadata.MetadataHelper;
+import com.strobel.assembler.metadata.MethodReference;
 import com.strobel.assembler.metadata.TypeReference;
 import com.strobel.core.Predicates;
 import com.strobel.decompiler.DecompilerContext;
@@ -356,6 +357,32 @@ public class InsertNecessaryConversionsTransform extends ContextTrackingVisitor<
         }
 
         return false;
+    }
+
+    //Verify that the invocation target has a compatible resolved type to that which its for
+    @Override
+    public Void visitInvocationExpression(final InvocationExpression node, Void data) {
+        super.visitInvocationExpression(node, data);
+        if (node.getParent() instanceof ExpressionStatement){
+            return null;//result is not used, so don't need to do anything
+        }
+        final MemberReference wantedReference = node.getUserData(Keys.MEMBER_REFERENCE);
+        if (node.getTarget() instanceof MemberReferenceExpression && wantedReference instanceof MethodReference) {
+            final ResolveResult targetResult = _resolver.apply(((MemberReferenceExpression) node.getTarget()).getTarget());
+            if (targetResult != null && targetResult.getType() != null) {
+                if (!MetadataHelper.isAssignableFrom(wantedReference.getDeclaringType(), targetResult.getType())) {
+                    final AstBuilder astBuilder = context.getUserData(Keys.AST_BUILDER);
+                    node.replaceWith(new Function<AstNode, AstNode>() {
+                        @Override
+                        public AstNode apply(final AstNode input) {
+                            return new CastExpression(astBuilder.convertType(((MethodReference)wantedReference).getReturnType()), node);
+                        }
+                    });
+                }
+            }
+        }
+
+        return null;
     }
 
     @Override
