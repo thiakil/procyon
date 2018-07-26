@@ -68,7 +68,8 @@ public class FixInnerClassGenericParamTransform implements IAstTransform {
 			} else if (typeReference.isNested()/* && node.toTypeReference().getDeclaringType().equals(context.getCurrentType())*/){
 				Identifier identifier = node.getIdentifierToken();
 				String oldName = identifier.getName();
-				identifier.setName(typeReference.getDeclaringType().getSimpleName()+"."+oldName);
+				if (!oldName.startsWith(typeReference.getDeclaringType().getSimpleName()))
+					identifier.setName(typeReference.getDeclaringType().getSimpleName()+"."+oldName);
 			}
 			return null;
 		}
