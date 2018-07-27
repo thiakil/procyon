@@ -1511,6 +1511,10 @@ public final class JavaOutputVisitor implements IAstVisitor<Void, Void> {
         if (extendsBound != null && !extendsBound.isNull()) {
             writeKeyword(Roles.EXTENDS_KEYWORD);
             extendsBound.acceptVisitor(this, ignored);
+            for (AstType interfaceBound : node.getInterfaceBound()){
+                writeKeyword(Roles.INTERFACE_BOUND_SEPARATOR);
+                interfaceBound.acceptVisitor(this, ignored);
+            }
         }
 
         endNode(node);

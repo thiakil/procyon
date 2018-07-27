@@ -31,6 +31,7 @@ public final class Roles {
     public final static Role<AstType> TYPE_ARGUMENT = new Role<>("TypeArgument", AstType.class, AstType.NULL);
     public final static Role<AstType> EXTENDS_BOUND = new Role<>("ExtendsBound", AstType.class, AstType.NULL);
     public final static Role<AstType> SUPER_BOUND = new Role<>("SuperBound", AstType.class, AstType.NULL);
+    public final static Role<AstType> INTERFACE_BOUND = new Role<>("InterfaceBound", AstType.class, AstType.NULL);
     public final static Role<TypeParameterDeclaration> TYPE_PARAMETER = new Role<>("TypeParameter", TypeParameterDeclaration.class);
     public final static Role<Expression> ARGUMENT = new Role<>("Argument", Expression.class, Expression.NULL);
     public final static Role<ParameterDeclaration> PARAMETER = new Role<>("Parameter", ParameterDeclaration.class);
@@ -72,6 +73,7 @@ public final class Roles {
     public final static TokenRole ASSIGN = new TokenRole("=", TokenRole.FLAG_OPERATOR);
     public final static TokenRole PIPE = new TokenRole("|", TokenRole.FLAG_OPERATOR);
     public final static TokenRole VARARGS = new TokenRole("...", TokenRole.FLAG_DELIMITER);
+    public final static TokenRole INTERFACE_BOUND_SEPARATOR = new TokenRole("&", TokenRole.FLAG_DELIMITER);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // KEYWORD TOKENS                                                                                                     //

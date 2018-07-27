@@ -738,7 +738,15 @@ public final class AstBuilder {
             final TypeParameterDeclaration typeParameter = new TypeParameterDeclaration(genericParameter.getName());
 
             if (genericParameter.hasExtendsBound()) {
-                typeParameter.setExtendsBound(convertType(genericParameter.getExtendsBound()));
+                TypeReference extendsBound = genericParameter.getExtendsBound();
+                if (extendsBound instanceof CompoundTypeReference){
+                    typeParameter.setExtendsBound(convertType(((CompoundTypeReference) extendsBound).getBaseType()));
+                    for (TypeReference interfaceBound : ((CompoundTypeReference) extendsBound).getInterfaces()){
+                        typeParameter.addInterfaceBound(convertType(interfaceBound));
+                    }
+                } else {
+                    typeParameter.setExtendsBound(convertType(extendsBound));
+                }
             }
 
             typeParameter.putUserData(Keys.TYPE_REFERENCE, genericParameter);

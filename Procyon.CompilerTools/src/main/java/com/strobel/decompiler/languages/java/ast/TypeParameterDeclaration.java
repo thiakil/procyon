@@ -50,6 +50,14 @@ public class TypeParameterDeclaration extends AstNode {
         setChildByRole(Roles.EXTENDS_BOUND, value);
     }
 
+    public final AstNodeCollection<AstType> getInterfaceBound() {
+        return getChildrenByRole(Roles.INTERFACE_BOUND);
+    }
+
+    public final void addInterfaceBound(final AstType value) {
+        addChild(value, Roles.INTERFACE_BOUND);
+    }
+
     public final Identifier getNameToken() {
         return getChildByRole(Roles.IDENTIFIER);
     }
