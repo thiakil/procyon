@@ -3209,11 +3209,26 @@ public final class TypeAnalysis {
 
         @Override
         public Void visitWildcard(final WildcardType t, final Map<TypeReference, TypeReference> map) {
+            if (MetadataResolver.areEquivalent(argumentType, t)) {
+                return null;
+            }
+
+            if (t.hasExtendsBound()) {
+                visit(t.getExtendsBound(), map);
+            }
+
+            if (t.hasSuperBound()) {
+                visit(t.getSuperBound(), map);
+            }
             return null;
         }
 
         @Override
         public Void visitCompoundType(final CompoundTypeReference t, final Map<TypeReference, TypeReference> map) {
+            visit(t.getBaseType(), map);
+            for (TypeReference ti : t.getInterfaces()){
+                visit(ti, map);
+            }
             return null;
         }
 
