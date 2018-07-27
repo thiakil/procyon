@@ -1291,6 +1291,20 @@ public final class MetadataHelper {
             }
 
             return true;
+        } else if (type instanceof CompoundTypeReference){
+            final CompoundTypeReference c = (CompoundTypeReference)type;
+
+            if (isSubType(c.getBaseType(), baseType, capture)){
+                return true;
+            }
+
+            for (final TypeReference interfaceType : c.getInterfaces()) {
+                if (isSubType(interfaceType, baseType, capture)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         final TypeReference lower = getLowerBound(baseType);
